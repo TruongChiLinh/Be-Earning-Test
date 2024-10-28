@@ -1,6 +1,6 @@
 - Blockchain Project
 - Mô tả
-
+noted :sử dụng Ngork để kết nối webhook với Jenkins để public network ket nối giữa Jenkins với github
 Dự án này triển khai một mạng blockchain private bằng Docker và Kubernetes với CI/CD và giám sát hệ thống.
 
 - Các thành phần chính:
