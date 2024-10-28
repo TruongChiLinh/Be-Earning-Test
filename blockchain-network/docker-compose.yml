@@ -1,0 +1,56 @@
+version: '3.7'
+
+services:
+  orderer:
+    image: hyperledger/fabric-orderer:latest
+    container_name: orderer.example.com
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=info
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+    ports:
+      - "7050:7050"
+    volumes:
+      - ./crypto-config/ordererOrganizations:/etc/hyperledger/ordererOrganizations
+    networks:
+      - blockchain
+
+  peer0.org1:
+    image: hyperledger/fabric-peer:latest
+    container_name: peer0.org1.example.com
+    environment:
+      - CORE_PEER_ID=peer0.org1.example.com
+      - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+    ports:
+      - "7051:7051"
+    volumes:
+      - ./crypto-config/peerOrganizations:/etc/hyperledger/peerOrganizations
+    networks:
+      - blockchain
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - blockchain
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+    networks:
+      - blockchain
+
+networks:
+  blockchain:
+    driver: bridge
